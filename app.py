@@ -1,41 +1,64 @@
 import streamlit as st
+import base64
 
-# 1. Page Configuration (Must be the first command)
-st.set_page_config(
-    page_title="CE 321 - Steel Design Suite",
-    page_icon="🏗️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="CE 321 - Steel Design", layout="wide")
 
-# 2. Load the Custom CSS
-st.markdown("""
+def get_base64(bin_file):
+    try:
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except Exception:
+        return ""
+
+campus_base64 = get_base64("campus.jpg") 
+
+st.markdown(f"""
 <style>
-div[data-testid="stSidebar"] { background-color: #1E293B; color: white; }
-div[data-testid="stSidebar"] h1, div[data-testid="stSidebar"] p { color: #F8FAFC !important; }
-div[data-testid="stMetricValue"] { font-size: 2rem !important; color: #0F172A; font-weight: 700; }
-div[data-testid="stMetricLabel"] { font-size: 1rem !important; color: #64748B; font-weight: 600; }
-h1 { color: #0F172A; border-bottom: 3px solid #3B82F6; padding-bottom: 10px; margin-bottom: 20px; }
-h2, h3 { color: #1E293B; }
-.streamlit-expanderHeader { background-color: #F1F5F9; border-radius: 5px; font-weight: bold; }
+.stApp {{
+    background-image: url("data:image/jpg;base64,{campus_base64}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}}
+.block-container {{
+    background-color: rgba(255, 255, 255, 0.92); 
+    padding: 3rem !important;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 2rem;
+}}
+div[data-testid="stSidebar"] {{ background-color: #F8F9FA; color: black; }}
+div[data-testid="stSidebar"] h1, div[data-testid="stSidebar"] p {{ color: #000000 !important; }}
+h1 {{ color: #000000; border-bottom: 3px solid #FFCC00; padding-bottom: 10px; margin-bottom: 20px; }}
+h2, h3 {{ color: #000000; }}
+div[data-testid="stPageLink-NavLink"] {{ background-color: #FFFFFF; padding: 15px; border-radius: 8px; border: 2px solid #FFCC00; margin-bottom: 10px; font-size: 1.1rem; font-weight: 600; color: #000000; }}
+div[data-testid="stPageLink-NavLink"]:hover {{ background-color: #FFCC00; color: #000000; }}
 </style>
 """, unsafe_allow_html=True)
-# 3. Homepage Content
-st.title("🏗️ Principles of Steel Design (CE 321)")
+
+try:
+    st.sidebar.image("logo.png", use_container_width=True) 
+except Exception:
+    pass 
+
+st.title("Principles of Steel Design (CE 321)")
 st.subheader("Analysis & Design Software Suite")
 
-st.markdown("""
-Welcome to the Steel Design Suite. This application automates the calculations for the analysis and design of structural steel members according to standard specifications (NSCP 2015 / AISC 360).
+st.markdown("Welcome to the Steel Design Suite. This application automates the calculations for the analysis and design of structural steel members according to standard specifications (NSCP 2015 / AISC 360).")
 
-### **Available Modules:**
-* **Topic 4:** Axial Tension Members
-* **Topic 5:** Axial Compression Members
-* **Topic 6:** Bending Members
-* **Topic 7:** Shear Strength
-* **Topic 8:** Combined Axial and Flexural Loading
-* **Topic 9:** Connections
+st.write("### Please select a module below to begin calculations:")
 
-**Instructor:** Engr. Tomomi Fujimura, RCE, RMP, SO2
-""")
+col1, col2 = st.columns(2)
+with col1:
+    st.page_link("pages/1_Tension.py", label="Axial Tension")
+    st.page_link("pages/3_Bending.py", label="Bending Members")
+    st.page_link("pages/5_Combined.py", label="Combined Loading")
 
-st.info("👈 Please select a design module from the sidebar to begin.")
+with col2:
+    st.page_link("pages/2_Compression.py", label="Axial Compression")
+    st.page_link("pages/4_Shear.py", label="Shear Strength")
+    st.page_link("pages/6_Connections.py", label="Bolted Connections")
+
+st.divider()
+st.caption("Developed for CE 321 - University of Santo Tomas - Legazpi")
